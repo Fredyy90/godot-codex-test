@@ -1,0 +1,24 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format: ini
+
+config_version=5
+
+[application]
+config/name="OpenSeeFace VTuber PoC"
+run/main_scene="res://main.tscn"
+config/version="0.1"
+
+[rendering]
+textures/vram_compression/import_etc2_astc=true
+environment/default_clear_color=Color(0, 0, 0, 0)
+environment/defaults/default_environment=""
+transparent_background=true
+
+[display]
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/mode=0
+window/size/resizable=true
