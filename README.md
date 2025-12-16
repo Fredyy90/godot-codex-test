@@ -7,7 +7,7 @@ Minimal 2D VTuber avatar driven by [OpenSeeFace](https://github.com/emilianavt/O
 - `main.tscn`: Entry scene (Node2D) that instantiates the avatar, network receiver, and control panel.
 - `scripts/`
   - `tracking_state.gd`: Lightweight data container for incoming tracking.
-  - `network_receiver.gd`: UDP JSON listener for OpenSeeFace packets.
+- `network_receiver.gd`: UDP listener for OpenSeeFace packets (JSON or raw byte array).
   - `avatar.gd`: Stick-figure renderer with eyes, mouth, and rotation.
   - `main.gd`: Scene wiring, smoothing, calibration, UI, and OBS toggles.
 
@@ -18,11 +18,20 @@ Minimal 2D VTuber avatar driven by [OpenSeeFace](https://github.com/emilianavt/O
 
 ## Running OpenSeeFace
 1. Clone the [OpenSeeFace](https://github.com/emilianavt/OpenSeeFace) repository and install its Python dependencies.
-2. Start tracking with the built-in UDP JSON sender (default port 11573):
+2. Start tracking with the built-in UDP sender (default port 11573). JSON output works, but the project also accepts the default byte-array stream:
    ```bash
    python run.py --tracker 0 --model 0 --detection_threshold 0.6 --output_format json --udp_host 127.0.0.1 --udp_port 11573
    ```
-   The stream contains one JSON packet per frame with a `faces` array. For each face we use:
+   Each frame contains a `faces` array (JSON) or a packed byte payload. The binary layout (little-endian) for each detected face is:
+   - `timestamp` (f64), `id` (i32)
+   - `frame_width`/`frame_height` (f32)
+   - `eye_blink[0]`/`eye_blink[1]` (f32)
+   - `success` (u8), `pnp_error` (f32)
+   - `quaternion` (4 x f32), `euler` (3 x f32)
+   - `translation` (3 x f32)
+   - Landmark confidence for each point (70 x f32), then landmark coordinates as `(y, x)` pairs (70 x 2 x f32)
+   The remaining 3D points and feature floats are ignored by the sample; the first face in the packet is used.
+   For each face we map:
    - `translation` (x, y, z) → head position (x, -y in 2D)
    - `euler` (yaw, pitch, roll) → head roll (Z rotation)
    - `eye_blink` ([left, right]) → blink amount (0=open, 1=closed)
