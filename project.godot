@@ -2,23 +2,26 @@
 ; It's best edited using the editor UI and not directly,
 ; since the parameters that go here are not all obvious.
 ;
-; Format: ini
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
 [application]
-config/name="OpenSeeFace VTuber PoC"
-run/main_scene="res://main.tscn"
-config/version="0.1"
 
-[rendering]
-textures/vram_compression/import_etc2_astc=true
-environment/default_clear_color=Color(0, 0, 0, 0)
-environment/defaults/default_environment=""
-transparent_background=true
+config/name="OpenSeeFace VTuber PoC"
+config/version="0.1"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.5")
 
 [display]
+
 window/size/viewport_width=720
 window/size/viewport_height=1280
-window/size/mode=0
-window/size/resizable=true
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true
+environment/default_clear_color=Color(0, 0, 0, 0)
+transparent_background=true
