@@ -36,16 +36,16 @@ func _draw() -> void:
     if _custom_root:
         _draw_debug_landmarks()
         return
-    var head_center := Vector2(0, -body_height * 0.5) + _state.head_pos * 0.75
-    var base := Vector2.ZERO
-    var neck := head_center
+    var head_center: Vector2 = Vector2(0, -body_height * 0.5) + _state.head_pos * 0.75
+    var base: Vector2 = Vector2.ZERO
+    var neck: Vector2 = head_center
     draw_set_transform(head_center, _state.head_rot, Vector2.ONE)
     draw_circle(Vector2.ZERO, head_radius, line_color)
-    var eye_scale_l := clamp(1.0 - _state.eye_blink_l, 0.1, 1.0)
-    var eye_scale_r := clamp(1.0 - _state.eye_blink_r, 0.1, 1.0)
-    draw_ellipse(eye_offset * Vector2(-1, 1), eye_radius * Vector2(1, eye_scale_l), line_color)
-    draw_ellipse(eye_offset, eye_radius * Vector2(1, eye_scale_r), line_color)
-    var mouth_open_offset := clamp(_state.mouth_open, 0.0, 1.0) * 10.0
+    var eye_scale_l: float = clamp(1.0 - _state.eye_blink_l, 0.1, 1.0)
+    var eye_scale_r: float = clamp(1.0 - _state.eye_blink_r, 0.1, 1.0)
+    _draw_ellipse(eye_offset * Vector2(-1, 1), eye_radius * Vector2(1, eye_scale_l), line_color)
+    _draw_ellipse(eye_offset, eye_radius * Vector2(1, eye_scale_r), line_color)
+    var mouth_open_offset: float = clamp(_state.mouth_open, 0.0, 1.0) * 10.0
     draw_line(Vector2(-mouth_width * 0.5, mouth_open_offset * -0.5), Vector2(mouth_width * 0.5, mouth_open_offset * -0.5), line_color, 2.0)
     draw_line(Vector2(-mouth_width * 0.25, mouth_open_offset * 0.5), Vector2(mouth_width * 0.25, mouth_open_offset * 0.5), line_color, 2.0)
     draw_set_transform(Vector2.ZERO)
@@ -58,6 +58,17 @@ func _draw() -> void:
     draw_line(hip, hip + Vector2(limb_length * 0.6, limb_length), line_color, 3.0)
     _draw_debug_landmarks()
 
+func _draw_ellipse(center: Vector2, radii: Vector2, color: Color, segments: int = 32, width: float = 2.0) -> void:
+    var points: PackedVector2Array = PackedVector2Array()
+    for i in segments:
+        var angle := TAU * float(i) / float(segments)
+        var point := Vector2(cos(angle), sin(angle)) * radii + center
+        points.append(point)
+    if points.is_empty():
+        return
+    points.append(points[0])
+    draw_polyline(points, color, width)
+
 func _draw_debug_landmarks() -> void:
     if debug_draw and not _landmarks.is_empty():
         for p in _landmarks:
@@ -66,7 +77,7 @@ func _draw_debug_landmarks() -> void:
 func _update_custom_pose() -> void:
     if not _custom_root:
         return
-    var head_center := Vector2(0, -body_height * 0.5) + _state.head_pos * 0.75
+    var head_center: Vector2 = Vector2(0, -body_height * 0.5) + _state.head_pos * 0.75
     if _custom_head:
         _custom_head.position = head_center
         _custom_head.rotation = _state.head_rot
