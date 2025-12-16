@@ -22,7 +22,7 @@ var _use_chroma := false
 var _idle_time := 0.0
 var _was_idle := false
 
-var _ui := {}
+var _ui: Dictionary = {}
 
 func _ready() -> void:
 	_build_scene()
@@ -155,16 +155,16 @@ func _labeled_spin(label_text: String, default_value: int, key: String) -> Contr
 	return hb
 
 func _apply_background() -> void:
-	var vp := get_viewport()
-	vp.transparent_bg = not _use_chroma
-	if _use_chroma:
-		VisualServer.set_default_clear_color(Color(0, 1, 0, 1))
-	else:
-		VisualServer.set_default_clear_color(Color(0, 0, 0, 0))
+        var vp := get_viewport()
+        vp.transparent_bg = not _use_chroma
+        if _use_chroma:
+                RenderingServer.set_default_clear_color(Color(0, 1, 0, 1))
+        else:
+                RenderingServer.set_default_clear_color(Color(0, 0, 0, 0))
 
 func _on_start() -> void:
-	var ip := _ui.ip.text
-	var port := int(_ui.port.value)
+        var ip: String = (_ui["ip"] as LineEdit).text
+        var port := int((_ui["port"] as SpinBox).value)
 	receiver.start(ip, port)
 	_ui.status.text = "Listening on %s:%d" % [ip, port]
 
